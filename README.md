@@ -27,11 +27,13 @@ Contact TradrLab at support@tradrlab.com to obtain your widget API key.
 <body>
     <div id="widget-container"></div>
 
-    <script src="dist/widget-core.min.js"></script>
+    <script src="widget-core.js"></script>
     <script>
         // Configure global settings
         window.TradrLabWidget.globals({
-            apikey: 'YOUR_API_KEY_HERE'
+            apikey: 'YOUR_API_KEY_HERE',
+            apiBaseUrl: 'https://dev.api.tradrlab.com/api',
+            debug: true
         });
 
         // Create widget instance
@@ -40,7 +42,7 @@ Contact TradrLab at support@tradrlab.com to obtain your widget API key.
             
             externalUserId: 'user-123',  // Required: Your user's unique ID
             
-            onWidgetReady: function(widget) {
+            onWidgetReady: function() {
                 console.log('✅ Widget ready!');
             },
             onMessageReceived: function(message) {
@@ -62,10 +64,8 @@ Open the integration example to see the widget in action:
 ## 📁 Files Included
 
 ```
-tradrlab-widget/
-├── dist/
-│   ├── widget-core.min.js       # ✅ Production build (203KB)
-│   └── widget-core.min.js.map   # Source maps for debugging
+tradrlab-widget-public/
+├── widget-core.js               # ✅ Production build (215KB)
 ├── integration-example.html      # 🎯 Complete working example
 ├── INTEGRATION_GUIDE.md         # 📖 Complete API documentation
 ├── README.md                    # 📋 This file

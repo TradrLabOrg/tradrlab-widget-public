@@ -59,8 +59,10 @@ The widget automatically connects to these TradrLab API endpoints:
 
 ### 1. Include the Widget Script
 
+Download the widget files and include the script in your HTML:
+
 ```html
-<script src="https://cdn.tradrlab.com/widget/v1/widget-core.min.js"></script>
+<script src="widget-core.js"></script>
 ```
 
 ### 2. Basic Integration
@@ -74,11 +76,13 @@ The widget automatically connects to these TradrLab API endpoints:
 <body>
     <div id="widget-container"></div>
 
-    <script src="https://cdn.tradrlab.com/widget/v1/widget-core.min.js"></script>
+    <script src="widget-core.js"></script>
     <script>
         // Configure global settings
         window.TradrLabWidget.globals({
-            apikey: 'YOUR_API_KEY_HERE'  // Required: Your TradrLab API key
+            apikey: 'YOUR_API_KEY_HERE',  // Required: Your TradrLab API key
+            apiBaseUrl: 'https://dev.api.tradrlab.com/api',
+            debug: true  // Set to false in production
         });
 
         // Create widget instance
@@ -88,8 +92,13 @@ The widget automatically connects to these TradrLab API endpoints:
             // Required: Unique identifier for your user
             externalUserId: 'user-123',
             
+            // Optional: Widget appearance
+            theme: 'light',
+            width: '100%',
+            height: '100%',
+            
             // Optional: Event callbacks
-            onWidgetReady: function(widgetInstance) {
+            onWidgetReady: function() {
                 console.log('Widget ready!');
             },
             onMessageReceived: function(message) {
@@ -115,12 +124,14 @@ Configure global settings that apply to all widget instances.
 **Parameters:**
 - `config` (Object): Global configuration
   - `apikey` (String, **required**): Your TradrLab widget API key
+  - `apiBaseUrl` (String, optional): API base URL (default: 'https://dev.api.tradrlab.com/api')
   - `debug` (Boolean, optional): Enable debug logging (default: false)
 
 **Example:**
 ```javascript
 window.TradrLabWidget.globals({
     apikey: 'wapi_your_key_here',
+    apiBaseUrl: 'https://dev.api.tradrlab.com/api',
     debug: true  // Enable for development
 });
 ```
@@ -442,7 +453,7 @@ Rate limits are enforced per API key and tracked per external user ID.
 
 ### Example Code
 - **Basic Integration**: See `integration-example.html` in this repository
-- **Advanced Examples**: Available in `/examples` directory
+- **Complete Demo**: The integration example shows simplified widget setup
 - **React Integration**: Contact support for React-specific examples
 - **Vue/Angular**: Framework-specific integration guides available
 
