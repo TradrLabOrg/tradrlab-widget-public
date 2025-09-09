@@ -1,0 +1,1031 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TradrLab Widget - Integration Example</title>
+    
+    <!-- Professional styling for the demo page -->
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .main-container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        
+        .header {
+            text-align: center;
+            color: white;
+            margin-bottom: 30px;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.95;
+        }
+        
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 30px;
+        }
+        
+        @media (max-width: 968px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+        
+        .panel {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        .panel-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 20px;
+            font-size: 1.2rem;
+            font-weight: 600;
+        }
+        
+        .panel-body {
+            padding: 25px;
+        }
+        
+        /* Configuration Section */
+        .config-section {
+            margin-bottom: 25px;
+        }
+        
+        .config-section h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 1.1rem;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        
+        .input-group input,
+        .input-group select {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        
+        .input-group input:focus,
+        .input-group select:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+        
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(102, 126, 234, 0.4);
+        }
+        
+        .btn-primary:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .btn-secondary {
+            background: #f5f5f5;
+            color: #333;
+            border: 2px solid #e0e0e0;
+        }
+        
+        .btn-secondary:hover {
+            background: #e0e0e0;
+        }
+        
+        /* Chat Interface */
+        .chat-display {
+            height: calc(100vh - 350px);
+            min-height: 400px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            padding: 15px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+        }
+        
+        .chat-placeholder {
+            color: #999;
+            font-style: italic;
+            text-align: center;
+            margin-top: 50px;
+        }
+        
+        .message-input-section {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .message-input {
+            flex: 1;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            resize: none;
+            height: 80px;
+            line-height: 1.4;
+        }
+        
+        .message-input:focus {
+            border-color: #667eea;
+            outline: none;
+        }
+        
+        .message-input:disabled {
+            background: #f5f5f5;
+            border-color: #ccc;
+            color: #999;
+        }
+        
+        /* Message Styling */
+        .chat-message {
+            margin-bottom: 15px;
+            padding: 12px;
+            border-radius: 8px;
+            line-height: 1.5;
+        }
+        
+        .chat-message.user {
+            background: #e3f2fd;
+            margin-left: 50px;
+            border-left: 4px solid #2196f3;
+        }
+        
+        .chat-message.ai {
+            background: #f5f5f5;
+            margin-right: 50px;
+            border-left: 4px solid #4caf50;
+        }
+        
+        .message-header {
+            font-weight: bold;
+            font-size: 12px;
+            margin-bottom: 8px;
+            color: #666;
+            text-transform: uppercase;
+        }
+        
+        /* Status and Event Log */
+        .status-section {
+            margin-bottom: 20px;
+        }
+        
+        .status-indicator {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        
+        .status-indicator.connected {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-indicator.disconnected {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .status-indicator.connecting {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: currentColor;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .event-log {
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: 'Monaco', 'Menlo', 'Ubuntu Mono', monospace;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+        
+        .event-entry {
+            margin-bottom: 8px;
+            padding: 6px 8px;
+            background: white;
+            border-radius: 4px;
+            border-left: 3px solid #667eea;
+        }
+        
+        .event-entry.error {
+            border-left-color: #f44336;
+            background: #ffebee;
+        }
+        
+        .event-entry.success {
+            border-left-color: #4caf50;
+            background: #e8f5e9;
+        }
+        
+        .event-time {
+            color: #666;
+            font-weight: 600;
+            margin-right: 8px;
+        }
+        
+        /* Sample Strategies */
+        .strategy-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .strategy-btn {
+            padding: 10px;
+            background: #f5f5f5;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-align: left;
+        }
+        
+        .strategy-btn:hover {
+            background: #e8eaf6;
+            border-color: #667eea;
+        }
+        
+        .strategy-btn strong {
+            display: block;
+            margin-bottom: 4px;
+            color: #333;
+        }
+        
+        .strategy-btn span {
+            color: #666;
+            font-size: 11px;
+        }
+        
+        /* Help Section */
+        .help-section {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0f4ff;
+            border-radius: 8px;
+            border: 1px solid #d0d8ff;
+        }
+        
+        .help-section h4 {
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .help-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .help-section li {
+            padding: 6px 0;
+            font-size: 13px;
+            color: #666;
+        }
+        
+        .help-section code {
+            background: white;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: monospace;
+            font-size: 12px;
+            color: #764ba2;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Header -->
+        <div class="header">
+            <h1>TradrLab Widget Integration</h1>
+            <p>Complete example demonstrating all widget features and callbacks</p>
+        </div>
+        
+        <div class="content-grid">
+            <!-- Left Panel: Configuration & Controls -->
+            <div class="panel">
+                <div class="panel-header">Configuration & Controls</div>
+                <div class="panel-body">
+                    <!-- Configuration Section -->
+                    <div class="config-section">
+                        <h3>1. Initialize Widget</h3>
+                        <div class="input-group">
+                            <input type="text" id="apikey" placeholder="Enter your API key" value="">
+                            <input type="text" id="userid" placeholder="User ID" value="demo-user-123">
+                        </div>
+                        <button class="btn btn-primary" id="initBtn" onclick="initializeWidget()">
+                            Initialize Widget
+                        </button>
+                    </div>
+                    
+                    <!-- Trading Settings (shown after init) -->
+                    <div class="config-section" id="tradingSettings" style="display: none;">
+                        <h3>2. Trading Settings</h3>
+                        <div class="input-group">
+                            <select id="symbolSelect">
+                                <option value="">Loading symbols...</option>
+                            </select>
+                            <select id="timeframeSelect">
+                                <option value="5M">5 Minutes</option>
+                                <option value="15M">15 Minutes</option>
+                                <option value="1H" selected>1 Hour</option>
+                                <option value="4H">4 Hours</option>
+                                <option value="1D">Daily</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-secondary" onclick="updateSettings()">
+                            Update Settings
+                        </button>
+                    </div>
+                    
+                    <!-- Sample Strategies (shown after init) -->
+                    <div class="config-section" id="sampleStrategies" style="display: none;">
+                        <h3>3. Sample Strategy Prompts</h3>
+                        <div class="strategy-buttons">
+                            <button class="strategy-btn" onclick="sendStrategy('momentum')">
+                                <strong>Interactive Mode</strong>
+                                <span>Momentum strategy example</span>
+                            </button>
+                            <button class="strategy-btn" onclick="sendStrategy('breakout')">
+                                <strong>Interactive Mode</strong>
+                                <span>Breakout strategy example</span>
+                            </button>
+                            <button class="strategy-btn" onclick="showTemplates()">
+                                <strong>Template Mode</strong>
+                                <span>Browse pre-built strategies</span>
+                            </button>
+                            <button class="strategy-btn" onclick="sendStrategy('swing')">
+                                <strong>Interactive Mode</strong>
+                                <span>Swing trading example</span>
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <!-- Status Section -->
+                    <div class="status-section">
+                        <h3>Connection Status</h3>
+                        <div id="connectionStatus" class="status-indicator disconnected">
+                            <span class="status-dot"></span>
+                            <span>Not Connected</span>
+                        </div>
+                    </div>
+                    
+                    <!-- Event Log -->
+                    <div class="config-section">
+                        <h3>Event Log</h3>
+                        <div class="event-log" id="eventLog">
+                            <div class="event-entry">
+                                <span class="event-time">--:--:--</span>
+                                Waiting for initialization...
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Right Panel: Widget -->
+            <div class="panel">
+                <div class="panel-header">TradrLab Chat Widget</div>
+                <div class="panel-body">
+                    <!-- Chat Messages Display -->
+                    <div id="chatContainer" class="chat-display">
+                        <div class="chat-placeholder">
+                            Click Initialize to start chatting...
+                        </div>
+                    </div>
+                    
+                    <!-- Message Input Section -->
+                    <div class="message-input-section">
+                        <textarea id="messageInput" class="message-input" 
+                                placeholder="Initialize widget first, then type your message here..." 
+                                disabled></textarea>
+                        <button id="sendBtn" class="btn btn-primary" disabled>Send</button>
+                    </div>
+                    
+                    <!-- Hidden widget container (for API functionality only) -->
+                    <div id="widget-container" style="display: none;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Load the TradrLab Widget Script -->
+    <script src="dist/widget-core.min.js"></script>
+    
+    <!-- Integration Script -->
+    <script>
+        // ============================================
+        // TradrLab Widget Integration Example
+        // ============================================
+        
+        let widget = null;
+        let connectionCheckInterval = null;
+        
+        // -----------------------------
+        // Utility Functions
+        // -----------------------------
+        
+        /**
+         * Log events to the event log panel
+         * @param {string} message - Message to log
+         * @param {string} type - Type of message (info, success, error)
+         */
+        function logEvent(message, type = 'info') {
+            const eventLog = document.getElementById('eventLog');
+            const time = new Date().toLocaleTimeString();
+            
+            const entry = document.createElement('div');
+            entry.className = `event-entry ${type}`;
+            entry.innerHTML = `
+                <span class="event-time">${time}</span>
+                ${message}
+            `;
+            
+            eventLog.insertBefore(entry, eventLog.firstChild);
+            
+            // Keep only last 20 entries
+            while (eventLog.children.length > 20) {
+                eventLog.removeChild(eventLog.lastChild);
+            }
+        }
+        
+        /**
+         * Update connection status indicator
+         * @param {string} status - Status: connected, disconnected, connecting
+         */
+        function updateConnectionStatus(status) {
+            const statusEl = document.getElementById('connectionStatus');
+            statusEl.className = `status-indicator ${status}`;
+            
+            const statusText = {
+                connected: 'Connected',
+                disconnected: 'Disconnected',
+                connecting: 'Connecting...'
+            };
+            
+            statusEl.innerHTML = `
+                <span class="status-dot"></span>
+                <span>${statusText[status]}</span>
+            `;
+        }
+        
+        // -----------------------------
+        // Widget Initialization
+        // -----------------------------
+        
+        /**
+         * Initialize the TradrLab widget with full configuration
+         * This demonstrates all available options and callbacks
+         */
+        function initializeWidget() {
+            const apikey = document.getElementById('apikey').value.trim();
+            const userid = document.getElementById('userid').value.trim();
+            
+            // Validation
+            if (!apikey) {
+                alert('Please enter your API key');
+                logEvent('Initialization failed: Missing API key', 'error');
+                return;
+            }
+            
+            if (!userid) {
+                alert('Please enter a User ID');
+                logEvent('Initialization failed: Missing User ID', 'error');
+                return;
+            }
+            
+            try {
+                logEvent('Starting widget initialization...');
+                updateConnectionStatus('connecting');
+                
+                // Step 1: Configure global settings
+                // These settings apply to all widget instances
+                window.TradrLabWidget.globals({
+                    apikey: apikey,
+                    apiBaseUrl: 'https://dev.api.tradrlab.com/api', // Your dev API endpoint (matches React app)
+                    debug: true // Enable debug logging in console
+                });
+                
+                logEvent('Global configuration set');
+                
+                // Step 2: Create the widget instance (hidden, for API functionality only)
+                // We'll use our own chat UI instead of the widget's built-in UI
+                widget = window.TradrLabWidget.CreateWidget('chat', 
+                    document.getElementById('widget-container'), {
+                    
+                    // REQUIRED: Unique identifier for your user
+                    externalUserId: userid,
+                    
+                    // OPTIONAL: UI Configuration
+                    theme: 'light',
+                    width: '100%',
+                    height: '100%',
+                    placeholder: 'Type your trading strategy question...',
+                    
+                    // OPTIONAL: Default trading settings
+                    defaultSymbol: 'EURUSD',
+                    defaultTimeframe: '1H',
+                    
+                    // ================================
+                    // EVENT CALLBACKS
+                    // ================================
+                    
+                    /**
+                     * Called when widget is fully initialized and ready
+                     * @param {Object} widgetInstance - The widget instance
+                     */
+                    onWidgetReady: function(widgetInstance) {
+                        logEvent('Widget initialized successfully', 'success');
+                        updateConnectionStatus('connected');
+                        
+                        // Show additional controls
+                        document.getElementById('tradingSettings').style.display = 'block';
+                        document.getElementById('sampleStrategies').style.display = 'block';
+                        
+                        // Update widget container style
+                        document.getElementById('widget-container').classList.add('widget-loaded');
+                        
+                        // Enable interaction
+                        document.getElementById('initBtn').disabled = true;
+                        document.getElementById('initBtn').textContent = 'Widget Active';
+                        
+                        // Enable chat interface
+                        enableChatInterface();
+                        
+                        // Add welcome message to our custom chat
+                        addChatMessage('Hello! How can I help you with your trading strategy today?', true);
+                        
+                        // IMPORTANT: Initialize symbol picker with data from API
+                        initializeSymbolPicker(widgetInstance);
+                        
+                        console.log('Widget ready:', widgetInstance);
+                    },
+                    
+                    /**
+                     * Called when a message is received from the AI
+                     * @param {Object} message - Message object with content and metadata
+                     */
+                    onMessageReceived: function(message) {
+                        // Log different message types
+                        const messageType = message.messageType || 'Chat';
+                        logEvent(`AI Response (${messageType}): ${message.content.substring(0, 50)}...`);
+                        
+                        // Add message to our custom chat interface
+                        addChatMessage(message.content, true, messageType);
+                        
+                        // Handle specific message types for logging
+                        switch(messageType) {
+                            case 'Scenario':
+                                logEvent('Strategy scenario received', 'success');
+                                break;
+                            case 'Model':
+                                logEvent('Trading model created successfully', 'success');
+                                break;
+                            case 'ExecutionResult':
+                                logEvent('Strategy execution completed', 'success');
+                                break;
+                            case 'Template':
+                                logEvent(`Template loaded: ${message.templateName || 'Unknown'}`, 'success');
+                                break;
+                            case 'Error':
+                                logEvent(`Error: ${message.content}`, 'error');
+                                break;
+                        }
+                        
+                        console.log('Message received:', message);
+                    },
+                    
+                    /**
+                     * Called when SignalR real-time connection is established
+                     */
+                    onSignalRConnected: function() {
+                        logEvent('Real-time connection established', 'success');
+                        updateConnectionStatus('connected');
+                    },
+                    
+                    /**
+                     * Called for all SignalR messages (lower level than onMessageReceived)
+                     * Useful for debugging or handling custom message types
+                     */
+                    onSignalRMessage: function(data) {
+                        console.log('SignalR raw message:', data);
+                        logEvent(`SignalR: ${JSON.stringify(data).substring(0, 100)}...`);
+                        
+                        // IMPORTANT: Track widget state changes for debugging
+                        if (widget) {
+                            logEvent(`Widget waiting state: ${widget.waitingForResponse}`);
+                        }
+                        
+                        // Handle SignalR-specific processing
+                        if (data.aiResponse) {
+                            logEvent('AI response received via SignalR');
+                            
+                            // Check for state management issues (debugging)
+                            setTimeout(() => {
+                                if (data.messageType && data.aiResponse && widget) {
+                                    if (widget.waitingForResponse === true) {
+                                        logEvent('⚠️ Widget still waiting after response received', 'error');
+                                    } else {
+                                        logEvent('✅ Widget state correctly reset after response');
+                                    }
+                                }
+                            }, 100);
+                        }
+                    },
+                    
+                    /**
+                     * Called when an error occurs
+                     * @param {Error} error - Error object
+                     */
+                    onError: function(error) {
+                        console.error('Widget error:', error);
+                        logEvent(`Error: ${error.message}`, 'error');
+                        
+                        // Handle specific error types
+                        if (error.type === 'CONNECTION_ERROR') {
+                            updateConnectionStatus('disconnected');
+                        } else if (error.type === 'API_ERROR') {
+                            alert('API Error: ' + error.message);
+                        }
+                    }
+                });
+                
+                logEvent('Widget created, waiting for connection...');
+                
+            } catch (error) {
+                console.error('Failed to initialize widget:', error);
+                logEvent(`Initialization failed: ${error.message}`, 'error');
+                alert('Failed to initialize widget. Check console for details.');
+                updateConnectionStatus('disconnected');
+            }
+        }
+        
+        // -----------------------------
+        // Widget Interaction Functions
+        // -----------------------------
+        
+        /**
+         * Update widget trading settings
+         */
+        function updateSettings() {
+            if (!widget) {
+                alert('Please initialize the widget first');
+                return;
+            }
+            
+            const symbol = document.getElementById('symbolSelect').value;
+            const timeframe = document.getElementById('timeframeSelect').value;
+            
+            // Update widget configuration
+            widget.config.set('defaultSymbol', symbol);
+            widget.config.set('defaultTimeframe', timeframe);
+            
+            logEvent(`Settings updated: ${symbol} @ ${timeframe}`, 'success');
+            
+            // Optionally send a message about the change
+            widget.sendMessage(`Please use ${symbol} on ${timeframe} timeframe for analysis`);
+        }
+        
+        /**
+         * Send predefined strategy prompts (Interactive Mode)
+         * @param {string} strategyType - Type of strategy to send
+         */
+        function sendStrategy(strategyType) {
+            if (!widget) {
+                alert('Please initialize the widget first');
+                return;
+            }
+            
+            const strategies = {
+                momentum: 'Create a momentum trading strategy using RSI and moving averages. Enter long when RSI crosses above 30 and price is above 50-period MA.',
+                breakout: 'Design a breakout strategy that identifies key support and resistance levels and enters trades when price breaks through with volume confirmation.',
+                scalping: 'Build a scalping strategy for 5-minute timeframe using EMA crossovers and ATR for stop loss placement.',
+                swing: 'Develop a swing trading strategy using daily charts with MACD divergence and fibonacci retracements for entry points.'
+            };
+            
+            const prompt = strategies[strategyType];
+            if (prompt) {
+                widget.sendMessage(prompt);
+                logEvent(`Sent ${strategyType} strategy prompt (Interactive Mode)`);
+            }
+        }
+        
+        /**
+         * Show templates for Template Mode
+         * This demonstrates the Template journey pathway
+         */
+        function showTemplates() {
+            if (!widget) {
+                alert('Please initialize the widget first');
+                return;
+            }
+            
+            logEvent('Opening template selection (Template Mode)');
+            
+            // Access the widget's template modal
+            if (widget.templateModal) {
+                widget.templateModal.show();
+                logEvent('Template modal opened - browse pre-built strategies');
+            } else {
+                logEvent('ERROR: Template modal not available', 'error');
+                alert('Template functionality not available. This may indicate an API loading issue.');
+            }
+        }
+        
+        // -----------------------------
+        // Custom Chat Interface Functions
+        // -----------------------------
+        
+        /**
+         * Add message to our custom chat display
+         * @param {string} content - Message content
+         * @param {boolean} isAi - Whether message is from AI
+         * @param {string} messageType - Type of message for styling
+         */
+        function addChatMessage(content, isAi = false, messageType = null) {
+            if (!content) return;
+            
+            const chatContainer = document.getElementById('chatContainer');
+            
+            // Remove placeholder if it exists
+            const placeholder = chatContainer.querySelector('.chat-placeholder');
+            if (placeholder) {
+                placeholder.remove();
+            }
+            
+            const messageDiv = document.createElement('div');
+            messageDiv.className = `chat-message ${isAi ? 'ai' : 'user'}`;
+            
+            const header = isAi ? 
+                `<div class="message-header">AI ${messageType ? `(${messageType})` : ''}</div>` :
+                `<div class="message-header">You</div>`;
+                
+            messageDiv.innerHTML = header + content;
+            
+            chatContainer.appendChild(messageDiv);
+            chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
+        
+        /**
+         * Enable the chat input interface
+         */
+        function enableChatInterface() {
+            document.getElementById('messageInput').disabled = false;
+            document.getElementById('sendBtn').disabled = false;
+            logEvent('Chat interface enabled');
+        }
+        
+        /**
+         * Handle sending messages through our custom interface
+         */
+        function sendChatMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            
+            if (!message) return;
+            
+            if (!widget) {
+                alert('Widget not initialized');
+                return;
+            }
+            
+            // Add user message to our chat display
+            addChatMessage(message, false);
+            logEvent(`Sent: ${message.substring(0, 50)}...`);
+            
+            // Clear input
+            messageInput.value = '';
+            
+            // Send through widget API
+            try {
+                widget.sendMessage(message);
+                logEvent('Message sent to AI');
+            } catch (error) {
+                logEvent(`Send error: ${error.message}`, 'error');
+                addChatMessage(`Error: ${error.message}`, true, 'Error');
+            }
+        }
+        
+        // -----------------------------
+        // Symbol Picker Initialization 
+        // -----------------------------
+        
+        /**
+         * Initialize symbol picker with data loaded from TradrLab API
+         * This demonstrates the proper way to populate trading symbols
+         */
+        function initializeSymbolPicker(widgetInstance) {
+            logEvent('Initializing symbol picker with API data...');
+            
+            // Wait for currencies to be loaded by the widget
+            setTimeout(() => {
+                populateSymbolPicker(widgetInstance);
+            }, 2000); // Give the API calls time to complete
+        }
+        
+        let symbolPickerRetryCount = 0;
+        
+        /**
+         * Populate symbol picker with currencies from the API
+         * This mirrors how the internal widget loads trading pairs
+         */
+        function populateSymbolPicker(widgetInstance) {
+            const symbolSelect = document.getElementById('symbolSelect');
+            symbolPickerRetryCount++;
+            
+            // Get currencies from widget config (loaded by API)
+            if (widgetInstance && widgetInstance.config) {
+                const currencies = widgetInstance.config.get('currencies');
+                
+                if (currencies && currencies.length > 0) {
+                    logEvent(`Populating with ${currencies.length} symbols from API`, 'success');
+                    
+                    // Clear loading message
+                    symbolSelect.innerHTML = '';
+                    
+                    // Group currencies by category for better UX
+                    const grouped = currencies.reduce((groups, currency) => {
+                        const group = currency.group || 'OTHER';
+                        if (!groups[group]) groups[group] = [];
+                        groups[group].push(currency);
+                        return groups;
+                    }, {});
+                    
+                    // Define display order for groups
+                    const groupOrder = ['FX_MAJORS', 'FX_CROSSES', 'IDX_AMERICA', 'IDX_EUROPE', 'FX_METALS', 'CMD_ENERGY', 'VCCY'];
+                    const groupDisplayNames = {
+                        'FX_MAJORS': 'Major Forex Pairs',
+                        'FX_CROSSES': 'Forex Crosses', 
+                        'FX_METALS': 'Metals',
+                        'IDX_AMERICA': 'US Indices',
+                        'IDX_EUROPE': 'European Indices',
+                        'CMD_ENERGY': 'Energy Commodities',
+                        'VCCY': 'Cryptocurrencies'
+                    };
+                    
+                    // Add organized option groups
+                    groupOrder.forEach(groupName => {
+                        if (grouped[groupName]) {
+                            const optgroup = document.createElement('optgroup');
+                            optgroup.label = groupDisplayNames[groupName] || groupName.replace(/_/g, ' ');
+                            
+                            grouped[groupName].forEach(currency => {
+                                const option = document.createElement('option');
+                                option.value = currency.name;
+                                option.textContent = `${currency.name} - ${currency.description}`;
+                                optgroup.appendChild(option);
+                            });
+                            
+                            symbolSelect.appendChild(optgroup);
+                        }
+                    });
+                    
+                    // Add any remaining groups
+                    Object.keys(grouped).forEach(groupName => {
+                        if (!groupOrder.includes(groupName)) {
+                            const optgroup = document.createElement('optgroup');
+                            optgroup.label = groupDisplayNames[groupName] || groupName.replace(/_/g, ' ');
+                            
+                            grouped[groupName].forEach(currency => {
+                                const option = document.createElement('option');
+                                option.value = currency.name;
+                                option.textContent = `${currency.name} - ${currency.description}`;
+                                optgroup.appendChild(option);
+                            });
+                            
+                            symbolSelect.appendChild(optgroup);
+                        }
+                    });
+                    
+                    // Set current default symbol (must come from API)
+                    const currentSymbol = widgetInstance.config.get('defaultSymbol');
+                    symbolSelect.value = currentSymbol;
+                    
+                    logEvent(`Symbol picker ready. Default: ${currentSymbol}`, 'success');
+                    
+                } else if (symbolPickerRetryCount < 5) {
+                    logEvent(`Currencies not loaded yet, retrying... (${symbolPickerRetryCount}/5)`);
+                    setTimeout(() => populateSymbolPicker(widgetInstance), 3000);
+                } else {
+                    logEvent('CRITICAL: Failed to load currencies from API after 5 attempts', 'error');
+                    symbolSelect.innerHTML = '<option value="" disabled>ERROR: Could not load trading symbols from API</option>';
+                    alert('Critical Error: Unable to load trading symbols from TradrLab API. Please check your API key and connection.');
+                }
+            } else {
+                logEvent('CRITICAL: Widget not ready for symbol picker', 'error');
+                symbolSelect.innerHTML = '<option value="" disabled>ERROR: Widget initialization failed</option>';
+                alert('Critical Error: Widget initialization failed. Please refresh and try again.');
+            }
+        }
+        
+        // -----------------------------
+        // Page Load Setup
+        // -----------------------------
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set up chat interface event handlers
+            document.getElementById('sendBtn').onclick = sendChatMessage;
+            
+            // Handle Enter key (but allow Shift+Enter for new lines)
+            document.getElementById('messageInput').onkeydown = function(e) {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendChatMessage();
+                }
+            };
+            
+            // You can preset the API key for testing
+            // document.getElementById('apikey').value = 'your-test-key';
+            
+            logEvent('Page loaded. Enter your API key to begin.');
+        });
+        
+        // -----------------------------
+        // Cleanup on page unload
+        // -----------------------------
+        
+        window.addEventListener('beforeunload', function() {
+            if (widget) {
+                widget.destroy();
+            }
+        });
+    </script>
+</body>
+</html>
